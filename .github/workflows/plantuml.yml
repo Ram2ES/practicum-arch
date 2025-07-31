@@ -14,12 +14,14 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3  # Обновлена версия до актуальной
+      uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}  # Добавляем токен для доступа
 
     - name: Set up Java
-      uses: actions/setup-java@v3  # Обновлена версия до актуальной
+      uses: actions/setup-java@v3
       with:
-        java-version: '24'  # Используем вашу версию JDK
+        java-version: '24'
         distribution: 'adopt'
 
     - name: Install Graphviz
@@ -29,8 +31,12 @@ jobs:
 
     - name: Install PlantUML
       run: |
-        wget https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar  # Скачиваем последнюю версию
-        echo "PLANTUML_JAR=$(pwd)/plantuml.jar" >> $GITHUB_ENV  # Сохраняем путь в переменные окружения
+        wget https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar
+        echo "PLANTUML_JAR=$(pwd)/plantuml.jar" >> $GITHUB_ENV
+
+    - name: Check PlantUML version
+      run: |
+        java -jar "$PLANTUML_JAR" -version
 
     - name: Generate Diagrams
       run: |
@@ -45,5 +51,5 @@ jobs:
         git config --local user.name "github-actions[bot]"
         git add diagrams/**/*.png
         git commit -m "Automated diagram generation" || echo "No changes to commit"
-        git push origin main
+        git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} main
       if: success()
