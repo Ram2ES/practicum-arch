@@ -1,7 +1,7 @@
 @startuml Context
 title FitLife Context Diagram
 top to bottom direction
-!include libs/C4_Component.puml
+!include ./libs/C4_Component.puml
 
 Person(user, "User", "A user of the fitness club system")
 Person(admin, "Administrator", "An administrator managing the system")
