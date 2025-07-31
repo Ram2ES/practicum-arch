@@ -1,9 +1,9 @@
-@startuml Code
+@startuml
 title FitLife Membership Management Code Diagram
 
 top to bottom direction
 
-!include ./libs/C4_Component.puml
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/master/C4_Component.puml
 
 class User {
   +String name
