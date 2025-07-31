@@ -14,33 +14,36 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3  # Обновлена версия до актуальной
 
     - name: Set up Java
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v3  # Обновлена версия до актуальной
       with:
-        java-version: '24'
+        java-version: '24'  # Используем вашу версию JDK
         distribution: 'adopt'
+
+    - name: Install Graphviz
+      run: |
+        sudo apt-get update
+        sudo apt-get install graphviz
 
     - name: Install PlantUML
       run: |
-        sudo apt-get update
-        sudo apt-get install -y graphviz
-        wget https://sourceforge.net/projects/plantuml/files/plantuml.jar/download -O plantuml.jar
-
+        wget https://github.com/plantuml/plantuml/releases/latest/download/plantuml.jar  # Скачиваем последнюю версию
+        echo "PLANTUML_JAR=$(pwd)/plantuml.jar" >> $GITHUB_ENV  # Сохраняем путь в переменные окружения
 
     - name: Generate Diagrams
       run: |
-        plantuml diagrams/context/*.puml
-        plantuml diagrams/container/*.puml
-        plantuml diagrams/component/*.puml
-        plantuml diagrams/code/*.puml
+        java -jar "$PLANTUML_JAR" diagrams/context/*.puml
+        java -jar "$PLANTUML_JAR" diagrams/container/*.puml
+        java -jar "$PLANTUML_JAR" diagrams/component/*.puml
+        java -jar "$PLANTUML_JAR" diagrams/code/*.puml
 
     - name: Commit Diagrams
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add diagrams/**/*.png
-        git commit -m "Automated diagram generation"
+        git commit -m "Automated diagram generation" || echo "No changes to commit"
         git push origin main
       if: success()
